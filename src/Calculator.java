@@ -1,5 +1,7 @@
 public class Calculator {
-    public static int calculate(String expr) {
+
+    public static Number calculate(String expr) {
+        int errorChar = -1;
         Parser parser = new Parser(expr);
         ASTNode ast = parser.getAST();
         return ast.evaluate();

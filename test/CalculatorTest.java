@@ -1,8 +1,13 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CalculatorTest {
+    @Test
+    void testSingleInteger() {
+        assertEquals(4, Calculator.calculate("4"));
+    }
 
     @Test
     void testTwoPlus() {
@@ -26,6 +31,60 @@ class CalculatorTest {
 
     @Test
     void testWhiteSpace() {
-        assertEquals(1, Calculator.calculate("5 - 4 + 3 - 2 -   1 + 4  *0"));
+        //assertEquals(1, Calculator.calculate("5 - 4 + 3 - 2 -   1 + 4  *0"));
+        assertEquals(1, Calculator.calculate(" 5 - 4   "));
     }
+
+    @Test
+    void testPlusMinus() {
+        assertEquals(1, Calculator.calculate("5-4+3"));
+    }
+
+    @Test
+    void testDivideMultiply() {
+        assertEquals(5, Calculator.calculate("2*10/4"));
+    }
+
+    @Test
+    void testNestingMedium() {
+        assertEquals(81, Calculator.calculate("(8*(2+4*(7-5))) + 1"));
+    }
+
+    @Test
+    void testFloat() {
+        assertEquals(1.0, Calculator.calculate("5.3-4.3"));
+    }
+
+    //******************
+    // ERROR TESTS
+    //******************
+
+    @Test
+    void testEmptyString() {
+        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+            Calculator.calculate("");
+        });
+    }
+
+    @Test
+    void testDanglingRightPlus() {
+        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+            Calculator.calculate("8/4+");
+        });
+    }
+
+    @Test
+    void testDanglingLeftTimes() {
+        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+            Calculator.calculate("*8/4");
+        });
+    }
+
+    @Test
+    void testInvalidCharacters() {
+        Assertions.assertThrows(InvalidCalculatorCharacterException.class, () -> {
+            Calculator.calculate("67+a");
+        });
+    }
+
 }

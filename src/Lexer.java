@@ -36,7 +36,12 @@ public class Lexer {
         } else if (inputStream.charAt(cursor) == ')') {
             cursor++;
             return new Token(TokenClass.CLOSE_PAREN, ")");
-        } else if (Character.isDigit(inputStream.charAt(cursor))) {
+        } else if (inputStream.charAt(cursor) == ' ') {
+            cursor++;
+            //TODO: make robust against many spaces
+            return getNextToken();
+        }
+        else if (Character.isDigit(inputStream.charAt(cursor))) {
             int j = cursor + 1;
             while (j < inputStream.length() && Character.isDigit(inputStream.charAt(j))) {
                 j++;
@@ -46,10 +51,8 @@ public class Lexer {
             cursor = j;
             return new Token(TokenClass.INT, lexeme);
         } else {
-            //TODO: throw an exception or return INVALID token
-            System.out.println("Encountered invalid token: " + inputStream.charAt(cursor));
+            throw new InvalidCalculatorCharacterException("Encountered invalid token: " + inputStream.charAt(cursor));
         }
-        return null;
     }
 
     public List<Token> getAllTokens() {

@@ -11,22 +11,21 @@ public class Parser {
 
     public Parser(String parseString) {
         //TODO: handle empty string
-        currTokenIdx = 0;
         Lexer lexer = new Lexer(parseString);
         tokens = lexer.getAllTokens();
         System.out.println(tokens);
 
         root = new ParseTreeNode(Nonterminal.GOAL);
-
-        currTokenIdx = 0;
         ParseTreeNode currParseTreeNode = this.root;
-//        while ((currToken = lexer.getNextToken()) != null) {
-//            System.out.println(currToken);
-//        }
+        currTokenIdx = 0;
 
-        boolean res  = parseGoal(currParseTreeNode);
-        System.out.println(res);
+        boolean isParseSuccessful  = parseGoal(currParseTreeNode);
+        System.out.println(isParseSuccessful);
         System.out.println(this.root);
+
+        if (!(isParseSuccessful && tokens.get(currTokenIdx).tokenClass == TokenClass.EOF)) {
+            throw new InvalidCalculatorExpression(": '" + parseString + "'");
+        }
     }
 
     private class ParseTreeNode {

@@ -1,9 +1,14 @@
 public class Driver {
     public static void main(String[] args) {
-        String test1 = "5+6";
+        String test1 = "5+";
         String test2 = "4+(7*2)";
 
-        int res = Calculator.calculate(test1);
+        Number res = null;
+        try {
+            res = Calculator.calculate(test1);
+        } catch (InvalidCalculatorExpression invalidCalculatorExpression) {
+            invalidCalculatorExpression.printStackTrace();
+        }
         System.out.println("Res: " + res);
 
     }

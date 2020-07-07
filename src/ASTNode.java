@@ -13,7 +13,7 @@ public class ASTNode {
                 return arg1 + arg2;
             }
         });
-        operatorMap.put(TokenClass.SUB, new BinOp() {
+        operatorMap.put(TokenClass.MINUS, new BinOp() {
             @Override
             public int evaluate(int arg1, int arg2) {
                 return arg1 - arg2;
@@ -36,7 +36,7 @@ public class ASTNode {
     private static final Set<TokenClass> binops = new HashSet<>();
     static {
         binops.add(TokenClass.PLUS);
-        binops.add(TokenClass.SUB);
+        binops.add(TokenClass.MINUS);
         binops.add(TokenClass.MULT);
         binops.add(TokenClass.DIV);
     }

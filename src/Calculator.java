@@ -4,6 +4,7 @@ public class Calculator {
         int errorChar = -1;
         Parser parser = new Parser(expr);
         ASTNode ast = parser.getAST();
+        System.out.println(ast);
         return ast.evaluate();
     }
 }

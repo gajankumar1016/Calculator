@@ -28,7 +28,7 @@ public class Parser {
         }
     }
 
-    private class ParseTreeNode {
+    private static class ParseTreeNode {
         ParseTreeNodeType nodeType;
         Nonterminal nt;
         Token token;

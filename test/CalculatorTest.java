@@ -10,6 +10,21 @@ class CalculatorTest {
     }
 
     @Test
+    void testSingleNegativeInteger() {
+        assertEquals(-1004, Calculator.calculate("-1004"));
+    }
+
+    @Test
+    void testStartNegativeOutsideParens() {
+        assertEquals(-7, Calculator.calculate("-(3+4)"));
+    }
+
+    @Test
+    void testStartNegativeInsideParens() {
+        assertEquals(-1, Calculator.calculate("(-3+4)"));
+    }
+
+    @Test
     void testTwoPlus() {
         assertEquals(19, Calculator.calculate("5+6+8"));
     }

@@ -13,19 +13,18 @@ public class Parser {
         //TODO: handle empty string
         Lexer lexer = new Lexer(parseString);
         tokens = lexer.getAllTokens();
-        System.out.println(tokens);
+        System.out.println("Lexing result: " + tokens);
 
         root = new ParseTreeNode(Nonterminal.GOAL);
         ParseTreeNode currParseTreeNode = this.root;
         currTokenIdx = 0;
 
         boolean isParseSuccessful  = parseGoal(currParseTreeNode);
-        System.out.println(isParseSuccessful);
-        System.out.println(this.root);
-
         if (!(isParseSuccessful && tokens.get(currTokenIdx).tokenClass == TokenClass.EOF)) {
             throw new InvalidCalculatorExpressionException(": '" + parseString + "'");
         }
+
+        System.out.println("Parse tree: " + this.root);
     }
 
     private static class ParseTreeNode {
@@ -72,7 +71,6 @@ public class Parser {
 
     private boolean parseGoal(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.GOAL);
-        System.out.println("Parse Goal");
 
         ParseTreeNode exprNode = new ParseTreeNode(Nonterminal.EXPR);
         currParseTreeNode.children.add(exprNode);
@@ -82,7 +80,6 @@ public class Parser {
 
     private boolean parseExpr(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.EXPR);
-        System.out.println("Parse Expr");
         ParseTreeNode termNode = new ParseTreeNode(Nonterminal.TERM);
         ParseTreeNode exprPrNode = new ParseTreeNode(Nonterminal.EXPR_PR);
         boolean res = parseTerm(termNode) && parseExprPr(exprPrNode);
@@ -96,7 +93,6 @@ public class Parser {
 
     private boolean parseTerm(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.TERM);
-        System.out.println("Parse Term");
         ParseTreeNode factorNode = new ParseTreeNode(Nonterminal.FACTOR);
         ParseTreeNode termPrNode = new ParseTreeNode(Nonterminal.TERM_PR);
         boolean res = parseFactor(factorNode) && parseTermPr(termPrNode);
@@ -110,7 +106,6 @@ public class Parser {
 
     private boolean parseExprPr(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.EXPR_PR);
-        System.out.println("Parse Expr'");
         int saveIdx = currTokenIdx;
         boolean res = parseExpr1(currParseTreeNode);
         if (res) {
@@ -163,7 +158,6 @@ public class Parser {
 
     private boolean parseTermPr(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.TERM_PR);
-        System.out.println("Parse Term'");
         int saveIdx = currTokenIdx;
         boolean res = parseTermPr1(currParseTreeNode);
         if (res) {
@@ -222,7 +216,6 @@ public class Parser {
 
     private boolean parseFactor(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.FACTOR);
-        System.out.println("Parse Factor");
         int saveIdx = currTokenIdx;
         ParseTreeNode exprNode = new ParseTreeNode(Nonterminal.EXPR);
         if (terminal(TokenClass.OPEN_PAREN)
@@ -250,7 +243,6 @@ public class Parser {
     }
 
     private boolean terminal(TokenClass tokenType) {
-        System.out.println("Terminal compare: want=" + tokenType + "; actual=" + tokens.get(currTokenIdx).tokenClass);
         return tokenType == tokens.get(currTokenIdx++).tokenClass;
     }
 

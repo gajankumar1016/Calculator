@@ -1,15 +1,25 @@
+import java.util.Scanner;
+
 public class Driver {
     public static void main(String[] args) {
-        String test1 = "5+";
-        String test2 = "4+(7*2)";
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.print("Enter an arithmetic expression or type 'q' to quit: \n>>> ");
+            String userInput = scanner.nextLine();
+            if (userInput.equals("q")) {
+                break;
+            }
+            Number res = null;
+            try {
+                res = Calculator.calculate(userInput);
+                //System.out.println("\nResult: " + res + "\n");
+                System.out.println(">>> " + res + "\n");
+            } catch (InvalidCalculatorExpressionException invalidCalculatorExpression) {
+                //invalidCalculatorExpression.printStackTrace();
+                System.out.println("ERROR: Invalid expression. Could not parse.\n");
+            }
 
-        Number res = null;
-        try {
-            res = Calculator.calculate(test1);
-        } catch (InvalidCalculatorExpressionException invalidCalculatorExpression) {
-            invalidCalculatorExpression.printStackTrace();
         }
-        System.out.println("Res: " + res);
-
+        scanner.close();
     }
 }

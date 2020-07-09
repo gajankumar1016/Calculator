@@ -37,19 +37,31 @@ public class Lexer {
             cursor++;
             return new Token(TokenClass.CLOSE_PAREN, ")");
         } else if (inputStream.charAt(cursor) == ' ') {
-            cursor++;
-            //TODO: make robust against many spaces
+            while (cursor < inputStream.length() && inputStream.charAt(cursor) == ' ') {
+                cursor++;
+            }
             return getNextToken();
-        }
-        else if (Character.isDigit(inputStream.charAt(cursor))) {
-            int j = cursor + 1;
-            while (j < inputStream.length() && Character.isDigit(inputStream.charAt(j))) {
+        } else if (Character.isDigit(inputStream.charAt(cursor)) || inputStream.charAt(cursor) == '.') {
+            int numDecimals = 0;
+            int j = cursor;
+            while (j < inputStream.length() &&
+                    (Character.isDigit(inputStream.charAt(j)) || inputStream.charAt(j) == '.')) {
+                if (inputStream.charAt(j) == '.') {
+                    numDecimals++;
+                    if (numDecimals > 1) {
+                        throw new InvalidCalculatorExpressionException("Too many decimal points in float.\n");
+                    }
+                }
                 j++;
             }
 
             String lexeme = inputStream.substring(cursor, j);
             cursor = j;
-            return new Token(TokenClass.INT, lexeme);
+            if (numDecimals > 0) {
+                return new Token(TokenClass.FLOAT, lexeme);
+            } else {
+                return new Token(TokenClass.INT, lexeme);
+            }
         } else {
             throw new InvalidCalculatorCharacterException("Encountered invalid token: " + inputStream.charAt(cursor));
         }

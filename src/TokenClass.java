@@ -4,6 +4,7 @@ public enum TokenClass {
     MULT,
     DIV,
     INT,
+    FLOAT,
     OPEN_PAREN,
     CLOSE_PAREN,
     INVALID,

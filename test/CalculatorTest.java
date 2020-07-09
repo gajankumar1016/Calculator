@@ -47,17 +47,27 @@ class CalculatorTest {
     @Test
     void testWhiteSpace() {
         //assertEquals(1, Calculator.calculate("5 - 4 + 3 - 2 -   1 + 4  *0"));
-        assertEquals(1, Calculator.calculate(" 5 - 4   "));
+        assertEquals(1, Calculator.calculate(" 5 - 4"));
     }
 
     @Test
     void testPlusMinus() {
-        assertEquals(1, Calculator.calculate("5-4+3"));
+        assertEquals(-2, Calculator.calculate("5-4+3"));
     }
 
     @Test
     void testDivideMultiply() {
-        assertEquals(5, Calculator.calculate("2*10/4"));
+        assertEquals(10, Calculator.calculate("2*10/2"));
+    }
+
+    @Test
+    void testDivideProduceInt() {
+        assertEquals(2, Calculator.calculate("10/5"));
+    }
+
+    @Test
+    void testDivideProduceFloat() {
+        assertEquals(1.6, Calculator.calculate("5/3"));
     }
 
     @Test
@@ -76,21 +86,21 @@ class CalculatorTest {
 
     @Test
     void testEmptyString() {
-        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+        Assertions.assertThrows(InvalidCalculatorExpressionException.class, () -> {
             Calculator.calculate("");
         });
     }
 
     @Test
     void testDanglingRightPlus() {
-        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+        Assertions.assertThrows(InvalidCalculatorExpressionException.class, () -> {
             Calculator.calculate("8/4+");
         });
     }
 
     @Test
     void testDanglingLeftTimes() {
-        Assertions.assertThrows(InvalidCalculatorExpression.class, () -> {
+        Assertions.assertThrows(InvalidCalculatorExpressionException.class, () -> {
             Calculator.calculate("*8/4");
         });
     }

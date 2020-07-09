@@ -62,9 +62,18 @@ public class ASTNode {
             return binop.evaluate(left.evaluate(), right.evaluate());
         } else if (token.tokenClass == TokenClass.INT) {
             return Integer.parseInt(token.lexeme);
+        } else if (token.tokenClass == TokenClass.FLOAT) {
+            //return Float.parseFloat(token.lexeme);
         }
         return 0;
     }
 
-
+    @Override
+    public String toString() {
+        return "ASTNode{" +
+                "token=" + token +
+                ", left=" + left +
+                ", right=" + right +
+                '}';
+    }
 }

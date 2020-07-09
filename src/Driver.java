@@ -6,7 +6,7 @@ public class Driver {
         Number res = null;
         try {
             res = Calculator.calculate(test1);
-        } catch (InvalidCalculatorExpression invalidCalculatorExpression) {
+        } catch (InvalidCalculatorExpressionException invalidCalculatorExpression) {
             invalidCalculatorExpression.printStackTrace();
         }
         System.out.println("Res: " + res);

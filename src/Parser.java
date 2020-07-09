@@ -24,7 +24,7 @@ public class Parser {
         System.out.println(this.root);
 
         if (!(isParseSuccessful && tokens.get(currTokenIdx).tokenClass == TokenClass.EOF)) {
-            throw new InvalidCalculatorExpression(": '" + parseString + "'");
+            throw new InvalidCalculatorExpressionException(": '" + parseString + "'");
         }
     }
 
@@ -64,6 +64,11 @@ public class Parser {
         }
     }
 
+    /***************************************************************************************
+     *
+     *  RECURSIVE DESCENT PARSING FUNCTIONS
+     *
+     ***************************************************************************************/
 
     private boolean parseGoal(ParseTreeNode currParseTreeNode) {
         assert (currParseTreeNode.nt == Nonterminal.GOAL);
@@ -234,6 +239,13 @@ public class Parser {
             currParseTreeNode.children.add(new ParseTreeNode(tokens.get(saveIdx)));
             return true;
         }
+
+        currTokenIdx = saveIdx;
+        if (terminal(TokenClass.FLOAT)) {
+            currParseTreeNode.children.add(new ParseTreeNode(tokens.get(saveIdx)));
+            return true;
+        }
+
         return false;
     }
 
@@ -242,99 +254,123 @@ public class Parser {
         return tokenType == tokens.get(currTokenIdx++).tokenClass;
     }
 
+
+    /**************************************************************************
+     *
+     * PARSE TREE TO ABSTRACT SYNTAX TREE CONVERSION FUNCTIONS
+     *
+     ***************************************************************************/
+
     public ASTNode getAST() {
         return getASTHelper(root);
     }
 
-    private ASTNode getASTHelper(ParseTreeNode currParseTreeNode) {
+    private ASTNode getASTExpr(ParseTreeNode currParseTreeNode) {
+        ParseTreeNode termChild = currParseTreeNode.children.get(0);
+        ParseTreeNode exprPrChild = currParseTreeNode.children.get(1);
+        //TODO: handle empty string
 
-        if (currParseTreeNode.nt == Nonterminal.GOAL) {
-            return getASTHelper(currParseTreeNode.children.get(0));
+        ASTNode termChildAST = getASTHelper(termChild);
+        ASTNode exprPrChildAST = getASTHelper(exprPrChild);
+
+        if (exprPrChildAST == null) {
+            return termChildAST;
+        } else {
+            exprPrChildAST.left = termChildAST;
+            return exprPrChildAST;
         }
+    }
 
-        if (currParseTreeNode.nt == Nonterminal.EXPR) {
-            ParseTreeNode termChild = currParseTreeNode.children.get(0);
-            ParseTreeNode exprPrChild = currParseTreeNode.children.get(1);
-            //TODO: handle empty string
+    private ASTNode getASTExprPr(ParseTreeNode currParseTreeNode) {
+        if (currParseTreeNode.children.isEmpty()) {
+            return null;
+        } else {
+            ParseTreeNode plusOrMinusChild = currParseTreeNode.children.get(0);
+            ParseTreeNode termChild = currParseTreeNode.children.get(1);
+            ParseTreeNode exprPrChild = currParseTreeNode.children.get(2);
 
             ASTNode termChildAST = getASTHelper(termChild);
             ASTNode exprPrChildAST = getASTHelper(exprPrChild);
 
+            ASTNode currAST = new ASTNode(plusOrMinusChild.token);
             if (exprPrChildAST == null) {
-                return termChildAST;
+                currAST.right = termChildAST;
             } else {
                 exprPrChildAST.left = termChildAST;
-                return exprPrChildAST;
+                currAST.right = exprPrChildAST;
             }
+            return currAST;
+        }
+    }
+
+    private ASTNode getASTTerm(ParseTreeNode currParseTreeNode) {
+        ParseTreeNode factorChild = currParseTreeNode.children.get(0);
+        ParseTreeNode termPrChild = currParseTreeNode.children.get(1);
+        ASTNode factorChildAST = getASTHelper(factorChild);
+        ASTNode termPrChildAST = getASTHelper(termPrChild);
+        if (termPrChildAST == null) {
+            return factorChildAST;
+        } else {
+            termPrChildAST.left = factorChildAST;
+            return termPrChildAST;
+        }
+    }
+
+    private ASTNode getASTTermPr(ParseTreeNode currParseTreeNode) {
+        if (currParseTreeNode.children.isEmpty()) {
+            return null;
+        }
+        ParseTreeNode timesOrDivChild = currParseTreeNode.children.get(0);
+        ParseTreeNode factorChild = currParseTreeNode.children.get(1);
+        ParseTreeNode termPrChild = currParseTreeNode.children.get(2);
+
+        ASTNode factorChildAST = getASTHelper(factorChild);
+        ASTNode termPrChildAST = getASTHelper(termPrChild);
+
+        ASTNode currNode = new ASTNode(timesOrDivChild.token);
+        if (termPrChildAST == null) {
+            currNode.right = factorChildAST;
+        } else {
+            termPrChildAST.left = factorChildAST;
+            currNode.right = termPrChildAST;
         }
 
-        if (currParseTreeNode.nt == Nonterminal.EXPR_PR) {
-            if (currParseTreeNode.children.isEmpty()) {
-                return null;
-            } else {
-                ParseTreeNode plusOrMinusChild = currParseTreeNode.children.get(0);
-                ParseTreeNode termChild = currParseTreeNode.children.get(1);
-                ParseTreeNode exprPrChild = currParseTreeNode.children.get(2);
+        return currNode;
+    }
 
-                ASTNode termChildAST = getASTHelper(termChild);
-                ASTNode exprPrChildAST = getASTHelper(exprPrChild);
-
-                ASTNode currAST = new ASTNode(plusOrMinusChild.token);
-                if (exprPrChildAST == null) {
-                    currAST.right = termChildAST;
-                } else {
-                    exprPrChildAST.left = termChildAST;
-                    currAST.right = exprPrChildAST;
-                }
-                return currAST;
-            }
-
+    private ASTNode getASTFactor(ParseTreeNode currParseTreeNode) {
+        int numChildren = currParseTreeNode.children.size();
+        assert (numChildren == 1 || numChildren == 3);
+        if (numChildren == 1) {
+            ParseTreeNode numChild = currParseTreeNode.children.get(0);
+            return new ASTNode(numChild.token);
+        } else {
+            ParseTreeNode exprChild = currParseTreeNode.children.get(1);
+            return getASTHelper(exprChild);
         }
+    }
 
-        if (currParseTreeNode.nt == Nonterminal.TERM) {
-            ParseTreeNode factorChild = currParseTreeNode.children.get(0);
-            ParseTreeNode termPrChild = currParseTreeNode.children.get(1);
-            ASTNode factorChildAST = getASTHelper(factorChild);
-            ASTNode termPrChildAST = getASTHelper(termPrChild);
-            if (termPrChildAST == null) {
-                return factorChildAST;
-            } else {
-                termPrChildAST.left = factorChildAST;
-                return termPrChildAST;
+    private ASTNode getASTHelper(ParseTreeNode currParseTreeNode) {
+
+        switch (currParseTreeNode.nt) {
+
+            case GOAL -> {
+                return getASTHelper(currParseTreeNode.children.get(0));
             }
-        }
-
-        if (currParseTreeNode.nt == Nonterminal.TERM_PR) {
-            if (currParseTreeNode.children.isEmpty()) {
-                return null;
+            case EXPR -> {
+                return getASTExpr(currParseTreeNode);
             }
-            ParseTreeNode timesOrDivChild = currParseTreeNode.children.get(0);
-            ParseTreeNode factorChild = currParseTreeNode.children.get(1);
-            ParseTreeNode termPrChild = currParseTreeNode.children.get(2);
-
-            ASTNode factorChildAST = getASTHelper(factorChild);
-            ASTNode termPrChildAST = getASTHelper(termPrChild);
-
-            ASTNode currNode = new ASTNode(timesOrDivChild.token);
-            if (termPrChildAST == null) {
-                currNode.right = factorChildAST;
-            } else {
-                termPrChildAST.left = factorChildAST;
-                currNode.right = termPrChildAST;
+            case EXPR_PR -> {
+                return getASTExprPr(currParseTreeNode);
             }
-
-            return currNode;
-        }
-
-        if (currParseTreeNode.nt == Nonterminal.FACTOR) {
-            int numChildren = currParseTreeNode.children.size();
-            assert (numChildren == 1 || numChildren == 3);
-            if (numChildren == 1) {
-                ParseTreeNode numChild = currParseTreeNode.children.get(0);
-                return new ASTNode(numChild.token);
-            } else {
-                ParseTreeNode exprChild = currParseTreeNode.children.get(1);
-                return getASTHelper(exprChild);
+            case TERM -> {
+                return getASTTerm(currParseTreeNode);
+            }
+            case TERM_PR -> {
+                return getASTTermPr(currParseTreeNode);
+            }
+            case FACTOR -> {
+                return getASTFactor(currParseTreeNode);
             }
         }
 

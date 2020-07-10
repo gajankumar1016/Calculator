@@ -1,3 +1,6 @@
+/**
+ * Enum to represent the class of a token in our calculator language. Used to label each lexeme returned by the Lexer.
+ */
 public enum TokenClass {
     PLUS,
     MINUS,
@@ -7,7 +10,5 @@ public enum TokenClass {
     FLOAT,
     OPEN_PAREN,
     CLOSE_PAREN,
-    INVALID,
     EOF,
-    PARSER_UNKNOWN
 }

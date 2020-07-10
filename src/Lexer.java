@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of a lexer for the Calculator language. Breaks up expression into logical tokens in the language.
+ */
 public class Lexer {
     private final String inputStream;
     private int cursor;

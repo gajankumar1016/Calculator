@@ -1,5 +1,8 @@
 import java.util.Objects;
 
+/**
+ * Class representing a token in the calculator language. Includes the lexeme and its token class.
+ */
 public class Token {
     public TokenClass tokenClass;
     public String lexeme;

@@ -25,7 +25,7 @@ class CalculatorTest {
     }
 
     @Test
-    void testTwoPlus() {
+    void testTwoAdditions() {
         assertEquals(19, Calculator.calculate("5+6+8"));
     }
 
@@ -78,6 +78,11 @@ class CalculatorTest {
     @Test
     void testFloat() {
         assertEquals(1.0f, (Float) Calculator.calculate("5.3-4.3"));
+    }
+
+    @Test
+    void testReadmeExample() {
+        assertEquals(583, Calculator.calculate("4 + ((5 + 9) - 3) - (9 * 2) + 4*2 - 10/5 + 592"));
     }
 
     //******************

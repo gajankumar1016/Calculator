@@ -10,6 +10,11 @@ public class Lexer {
     private Token lastToken = null;
 
 
+    /**
+     * Gets the next token from the input string.
+     *
+     * @return the next token
+     */
     public Token getNextToken() {
         if (cursor == inputStream.length()) {
             cursor++;
@@ -86,6 +91,11 @@ public class Lexer {
         }
     }
 
+    /**
+     * Tokenizes the whole input stream in one go.
+     *
+     * @return list of all the tokens from the input string.
+     */
     public List<Token> getAllTokens() {
         List<Token> tokenList = new ArrayList<>();
         Token currToken;

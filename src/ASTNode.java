@@ -18,6 +18,7 @@ public class ASTNode {
 
     /**
      * Calculates value represented by the abstract syntax tree rooted at the current ('this') node.
+     *
      * @return value of the AST
      */
     public Number evaluate() {
@@ -29,6 +30,7 @@ public class ASTNode {
      * Calculates value represented by the AST rooted at the current ('this') node. Returns result in a custom number
      * type that handles differences in arithmetic operation implementation based on whether the argument is an integer
      * or floating-point number.
+     *
      * @return value of AST in custom CalcNumber format
      */
     private CalcNumber evaluateHelper() {

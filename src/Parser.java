@@ -2,24 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
-    private enum ParseTreeNodeType { NONTERMINAL, TERMINAL }
-    private enum Nonterminal { GOAL, EXPR, EXPR_PR, TERM, TERM_PR, FACTOR }
+    private enum ParseTreeNodeType {NONTERMINAL, TERMINAL}
 
-    private ParseTreeNode root;
-    private List<Token> tokens;
+    private enum Nonterminal {GOAL, EXPR, EXPR_PR, TERM, TERM_PR, FACTOR}
+
+    private final ParseTreeNode root;
+    private final List<Token> tokens;
     private int currTokenIdx;
 
     public Parser(String parseString) {
-        //TODO: handle empty string
         Lexer lexer = new Lexer(parseString);
         tokens = lexer.getAllTokens();
         System.out.println("Lexing result: " + tokens);
 
         root = new ParseTreeNode(Nonterminal.GOAL);
-        ParseTreeNode currParseTreeNode = this.root;
         currTokenIdx = 0;
 
-        boolean isParseSuccessful  = parseGoal(currParseTreeNode);
+        boolean isParseSuccessful = parseGoal(this.root);
         if (!(isParseSuccessful && tokens.get(currTokenIdx).tokenClass == TokenClass.EOF)) {
             throw new InvalidCalculatorExpressionException(": '" + parseString + "'");
         }
@@ -177,9 +176,10 @@ public class Parser {
     }
 
     /**
-     * 1st production of Term'
-     * @param currParseTreeNode
-     * @return
+     * Tries to match input using 1st production of Term'
+     *
+     * @param currParseTreeNode a Term' parse tree node; will add children to this node if the production is a match
+     * @return true if there's a match, false otherwise
      */
     private boolean parseTermPr1(ParseTreeNode currParseTreeNode) {
         int saveIdx = currTokenIdx;
@@ -247,12 +247,17 @@ public class Parser {
     }
 
 
-    /**************************************************************************
+    /* *************************************************************************
      *
      * PARSE TREE TO ABSTRACT SYNTAX TREE CONVERSION FUNCTIONS
      *
      ***************************************************************************/
 
+    /**
+     * Gets abstract syntax tree from the already constructed parse tree.
+     *
+     * @return root of the abstract syntax tree
+     */
     public ASTNode getAST() {
         return getASTHelper(root);
     }
@@ -260,7 +265,6 @@ public class Parser {
     private ASTNode getASTExpr(ParseTreeNode currParseTreeNode) {
         ParseTreeNode termChild = currParseTreeNode.children.get(0);
         ParseTreeNode exprPrChild = currParseTreeNode.children.get(1);
-        //TODO: handle empty string
 
         ASTNode termChildAST = getASTHelper(termChild);
         ASTNode exprPrChildAST = getASTHelper(exprPrChild);

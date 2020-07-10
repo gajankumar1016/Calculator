@@ -1,5 +1,10 @@
 import java.util.Scanner;
 
+/**
+ * Class to read user expressions from the command line and attempt to return the result of the calculation. Prints
+ * an error if unable to parse. Also prints out tokens output by lexer, and the resulting parse tree and abstract syntax
+ * tree.
+ */
 public class Driver {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

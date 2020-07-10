@@ -1,3 +1,8 @@
+/**
+ * Custom number class for the calculator. Either contains an Integer or a Float. Implements arithmetic operations
+ * taking into account the type of number. For example, 10/2 should produce an Integer, whereas 10/3 would produce a
+ * Float.
+ */
 public class CalcNumber {
     private final Number n;
 

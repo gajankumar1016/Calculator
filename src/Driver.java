@@ -12,10 +12,8 @@ public class Driver {
             Number res = null;
             try {
                 res = Calculator.calculate(userInput);
-                //System.out.println("\nResult: " + res + "\n");
                 System.out.println(">>> " + res + "\n");
             } catch (InvalidCalculatorExpressionException invalidCalculatorExpression) {
-                //invalidCalculatorExpression.printStackTrace();
                 System.out.println("ERROR: Invalid expression. Could not parse.\n");
             }
 

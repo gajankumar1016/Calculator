@@ -67,7 +67,7 @@ class CalculatorTest {
 
     @Test
     void testDivideProduceFloat() {
-        assertEquals(1.6, Calculator.calculate("5/3"));
+        assertEquals(1.6f, Calculator.calculate("8/5"));
     }
 
     @Test
@@ -77,7 +77,7 @@ class CalculatorTest {
 
     @Test
     void testFloat() {
-        assertEquals(1.0, Calculator.calculate("5.3-4.3"));
+        assertEquals(1.0f, (Float) Calculator.calculate("5.3-4.3"));
     }
 
     //******************

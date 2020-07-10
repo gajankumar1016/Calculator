@@ -7,38 +7,53 @@ import java.util.List;
 public class Lexer {
     private final String inputStream;
     private int cursor;
+    private Token lastToken = null;
 
-    public void rewind() {
-        //TODO: rewind token
-
-    }
 
     public Token getNextToken() {
         if (cursor == inputStream.length()) {
             cursor++;
-            return new Token(TokenClass.EOF, "$");
+            lastToken = new Token(TokenClass.EOF, "$");
+            return lastToken;
         } else if (cursor > inputStream.length()) {
             return null;
         }
 
         if (inputStream.charAt(cursor) == '+') {
             cursor++;
-            return new Token(TokenClass.PLUS, "+");
+            lastToken = new Token(TokenClass.PLUS, "+");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == '-') {
+            Token zeroToken = new Token(TokenClass.INT, "0");
+            Token openParenToken = new Token(TokenClass.OPEN_PAREN, "(");
+            boolean negativeLeadsExpression = cursor == 0;
+            boolean effectivelyInsertedZero = zeroToken.equals(lastToken);
+            boolean negativeStartsExpr = openParenToken.equals(lastToken);
+            if ((negativeLeadsExpression || negativeStartsExpr) && !effectivelyInsertedZero) {
+                //Don't increment cursor, as next call should return us to handling the current negative sign
+                lastToken = zeroToken;
+                return zeroToken;
+            }
+
             cursor++;
-            return new Token(TokenClass.MINUS, "-");
+            lastToken = new Token(TokenClass.MINUS, "-");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == '*') {
             cursor++;
-            return new Token(TokenClass.MULT, "*");
+            lastToken = new Token(TokenClass.MULT, "*");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == '/') {
             cursor++;
-            return new Token(TokenClass.DIV, "/");
+            lastToken = new Token(TokenClass.DIV, "/");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == '(') {
             cursor++;
-            return new Token(TokenClass.OPEN_PAREN, "(");
+            lastToken = new Token(TokenClass.OPEN_PAREN, "(");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == ')') {
             cursor++;
-            return new Token(TokenClass.CLOSE_PAREN, ")");
+            lastToken = new Token(TokenClass.CLOSE_PAREN, ")");
+            return lastToken;
         } else if (inputStream.charAt(cursor) == ' ') {
             while (cursor < inputStream.length() && inputStream.charAt(cursor) == ' ') {
                 cursor++;
@@ -61,10 +76,11 @@ public class Lexer {
             String lexeme = inputStream.substring(cursor, j);
             cursor = j;
             if (numDecimals > 0) {
-                return new Token(TokenClass.FLOAT, lexeme);
+                lastToken = new Token(TokenClass.FLOAT, lexeme);
             } else {
-                return new Token(TokenClass.INT, lexeme);
+                lastToken = new Token(TokenClass.INT, lexeme);
             }
+            return lastToken;
         } else {
             throw new InvalidCalculatorCharacterException("Encountered invalid token: " + inputStream.charAt(cursor));
         }

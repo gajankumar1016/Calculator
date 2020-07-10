@@ -21,7 +21,7 @@ class CalculatorTest {
 
     @Test
     void testStartNegativeInsideParens() {
-        assertEquals(-1, Calculator.calculate("(-3+4)"));
+        assertEquals(-7, Calculator.calculate("(-3+4)"));
     }
 
     @Test

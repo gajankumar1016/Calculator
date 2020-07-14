@@ -3,6 +3,11 @@
  */
 public class Calculator {
 
+    //Suppress default constructor to make the Calculator class noninstantiable
+    private Calculator() {
+        throw new AssertionError("Cannot instantiate a calculator.");
+    }
+
     /**
      * Attempts to evaluate an arithmetic expression given as a String
      *
